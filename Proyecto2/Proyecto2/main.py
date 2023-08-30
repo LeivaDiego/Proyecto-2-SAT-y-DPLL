@@ -50,8 +50,51 @@ def fuerza_bruta(clausulas):
 
 
 
-clausula = [{'p'}, {'-p'}]
+def DPLL(B, I):
+    # Caso base: Si B esta vacio, la formula es satisfacible
+    if not B:
+        return True, I
+    
+    # Caso base: Si hay una disyuncion vacia en B, la formula es insatisfacible
+    if any(len(clausula) == 0 for clausula in B):
+        return False, {}
+    
+    # Seleccionar un literal L no asignado de B
+    L = next(iter(B[0]))
+    
+    # Constuir B' eliminando clausulas que contienen L y -L de las clausulas restantes
+    B_pos = [clausula - {L} for clausula in B if L not in clausula]
+    I_pos = I.copy()
+    I_pos[L] = True
+    
+    # Llamada recursiva con B' y asignacion actualizada I
+    resultado, I1 = DPLL(B_pos, I_pos)
+    if resultado:
+        return True, I1
+    
+    # Construir B' eliminando clausulas que contienen -L y  L de las clausulas restantes
+    B_neg = [clausula - {'-' + L} for clausula in B if '-' + L not in clausula]
+    I_neg = I.copy()
+    I_neg[L] = False
+    
+    # Llamada recursiva con B' y asignacion actualizada I
+    resultado, I2 = DPLL(B_neg, I_neg)
+    if resultado:
+        return True, I2
+    
+    # Si ambas llamadas recursivas devuelven Falso, la formula es insatisfacible
+    return False, {}
+
+
+clausula = [{'p'}, {'-q'}]
 resultado, asignacion = fuerza_bruta(clausula)
+print("Algoritmo de fuerza Bruta")
 print(f"Clausula: {clausula}")
-print("Resultado:", resultado)
-print("Asignacion:", asignacion)
+print(f"Resultado: {resultado}")
+print(f"Asignacion: {asignacion}")
+
+
+print(f"\nAlgoritmo DPLL")
+print(f"Clausula: {clausula}")
+print(f"Resultado: {resultado}")
+print(f"Asignacion: {asignacion}")
