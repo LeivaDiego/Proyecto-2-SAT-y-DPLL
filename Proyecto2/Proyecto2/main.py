@@ -87,13 +87,18 @@ def DPLL(B, I):
 
 
 clausula = [{'p'}, {'-q'}]
+
+
 resultado, asignacion = fuerza_bruta(clausula)
 print("Algoritmo de fuerza Bruta")
 print(f"Clausula: {clausula}")
 print(f"Resultado: {resultado}")
 print(f"Asignacion: {asignacion}")
 
+B = clausula
+I = {}
 
+resultado, asignacion = DPLL(B,I)
 print(f"\nAlgoritmo DPLL")
 print(f"Clausula: {clausula}")
 print(f"Resultado: {resultado}")
