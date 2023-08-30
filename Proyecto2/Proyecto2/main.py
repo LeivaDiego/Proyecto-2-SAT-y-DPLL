@@ -27,6 +27,7 @@ def convert_to_tuples(formula_list):
     # Se retorna el listado final de conjuntos de tuplas
     return converted_list
 
+
 def brute_force(cnf):
     literals = set()
     for conj in cnf:
@@ -42,16 +43,50 @@ def brute_force(cnf):
  
     return False, None
 
+def dpll(cnf, assignments={}):
+ 
+    if len(cnf) == 0:
+        return True, assignments
+ 
+    if any([len(c)==0 for c in cnf]):
+        return False, None
+ 
+    for c in cnf:
+        for literal in c:
+            l =literal[0]
+
+ 
+    new_cnf = [c for c in cnf if (l, True) not in c]
+    new_cnf = [c.difference({(l, False)}) for c in new_cnf]
+    sat, vals = dpll(new_cnf, {**assignments, **{l: True}})
+    if sat:
+        return sat, vals
+ 
+    new_cnf = [c for c in cnf if (l, False) not in c]
+    new_cnf = [c.difference({(l, True)}) for c in new_cnf]
+    sat, vals = dpll(new_cnf, {**assignments, **{l: False}})
+    if sat:
+        return sat, vals
+ 
+    return False, None
 
 # Reemplazo de {} por [] 
 # pues los sets en python no tiene un orden predecible
-formula = [['p'], ['-p']]
+formula = [['p'], ['-q']]
 formula_str = str(formula).replace('[', '{').replace(']', '}')
 tuple_formula = convert_to_tuples(formula)
 
 # Algoritmo de fuerza bruta
 resultado, asignacion = brute_force(tuple_formula)
-print(f"-----Algoritmo de fuerza bruta-----")
+print(f"Algoritmo de fuerza bruta")
+print(f"Formula booleana: {formula_str}")
+print(f"Resultado: {resultado}")
+print(f"Asignacion: {asignacion}\n")
+
+# Algoritmo DPLL
+I = {'p': True} #Asignaciones parciales
+resultado, asignacion = dpll(tuple_formula, I)
+print(f"Algoritmo DPLL")
 print(f"Formula booleana: {formula_str}")
 print(f"Resultado: {resultado}")
 print(f"Asignacion: {asignacion}")
