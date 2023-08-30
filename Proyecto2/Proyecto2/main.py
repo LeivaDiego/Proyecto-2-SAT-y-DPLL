@@ -62,7 +62,7 @@ def DPLL(B, I):
     # Seleccionar un literal L no asignado de B
     L = next(iter(B[0]))
     
-    # Constuir B' eliminando clausulas que contienen L y -L de las clausulas restantes
+    # Constuir B' eliminando clausulas que contienen L de las clausulas restantes
     B_pos = [clausula - {L} for clausula in B if L not in clausula]
     I_pos = I.copy()
     I_pos[L] = True
@@ -72,7 +72,7 @@ def DPLL(B, I):
     if resultado:
         return True, I1
     
-    # Construir B' eliminando clausulas que contienen -L y  L de las clausulas restantes
+    # Construir B' eliminando clausulas que contienen -L de las clausulas restantes
     B_neg = [clausula - {'-' + L} for clausula in B if '-' + L not in clausula]
     I_neg = I.copy()
     I_neg[L] = False
