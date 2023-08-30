@@ -58,14 +58,17 @@ def DPLL(B, I):
     # Caso base: Si hay una disyuncion vacia en B, la formula es insatisfacible
     if any(len(clausula) == 0 for clausula in B):
         return False, {}
-    
+
     # Seleccionar un literal L no asignado de B
     L = next(iter(B[0]))
+
+    # Para literales negativos, se extrea el nombre de la variable sin el signo '-'
+    variable = L[1:] if L.startswith('-') else L
     
     # Constuir B' eliminando clausulas que contienen L de las clausulas restantes
     B_pos = [clausula - {L} for clausula in B if L not in clausula]
     I_pos = I.copy()
-    I_pos[L] = True
+    I_pos[variable] = not L.startswith('-')
     
     # Llamada recursiva con B' y asignacion actualizada I
     resultado, I1 = DPLL(B_pos, I_pos)
@@ -73,9 +76,10 @@ def DPLL(B, I):
         return True, I1
     
     # Construir B' eliminando clausulas que contienen -L de las clausulas restantes
-    B_neg = [clausula - {'-' + L} for clausula in B if '-' + L not in clausula]
+    L_neg = '-' + variable if not L.startswith('-') else variable
+    B_neg = [clausula - {L_neg} for clausula in B if L_neg not in clausula]
     I_neg = I.copy()
-    I_neg[L] = False
+    I_neg[variable] = L.startswith('-')
     
     # Llamada recursiva con B' y asignacion actualizada I
     resultado, I2 = DPLL(B_neg, I_neg)
@@ -96,7 +100,7 @@ print(f"Resultado: {resultado}")
 print(f"Asignacion: {asignacion}")
 
 B = clausula
-I = {}
+I = {'p':False, 'q':True}
 
 resultado, asignacion = DPLL(B,I)
 print(f"\nAlgoritmo DPLL")
